@@ -1,4 +1,4 @@
-package com.example.crowdfundingplatform.dto;
+package com.example.crowdfundingplatform.domain.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.*;

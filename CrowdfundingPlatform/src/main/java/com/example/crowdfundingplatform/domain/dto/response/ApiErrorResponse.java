@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Builder
 public class ApiErrorResponse {
 
-    private Object message;
+    private String message;
     private int status;
     private LocalDate time;
     private String uri;

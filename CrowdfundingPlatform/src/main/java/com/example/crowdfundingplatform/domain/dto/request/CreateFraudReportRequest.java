@@ -18,9 +18,6 @@ public class CreateFraudReportRequest {
     @Size(max = 5000, message = "El motivo no debe exceder los 5000 caracteres")
     private String reason;
 
-    @NotNull(message = "El id del reportero no puede ser nulo")
-    private Long reporterId;
-
     @NotNull(message = "El id de la campaña no puede ser nulo")
     private Long campaignId;
 }

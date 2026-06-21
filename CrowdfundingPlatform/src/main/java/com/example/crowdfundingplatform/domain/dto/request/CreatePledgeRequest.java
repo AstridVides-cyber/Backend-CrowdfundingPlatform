@@ -19,9 +19,6 @@ public class CreatePledgeRequest {
     @Positive(message = "El monto debe ser mayor a cero")
     private BigDecimal amount;
 
-    @NotNull(message = "El id del sponsor no puede ser nulo")
-    private Long sponsorId;
-
     @NotNull(message = "El id de la campaña no puede ser nulo")
     private Long campaignId;
 

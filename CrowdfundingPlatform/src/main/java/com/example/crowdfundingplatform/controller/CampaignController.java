@@ -1,6 +1,6 @@
 package com.example.crowdfundingplatform.controller;
 
-import com.example.crowdfundingplatform.dto.CampaignDTO;
+import com.example.crowdfundingplatform.domain.dto.CampaignDTO;
 import com.example.crowdfundingplatform.service.CampaignService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

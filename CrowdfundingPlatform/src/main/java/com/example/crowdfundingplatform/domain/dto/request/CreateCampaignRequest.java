@@ -41,7 +41,4 @@ public class CreateCampaignRequest {
     private String category;
     private String location;
     private Boolean isFeatured;
-
-    @NotNull(message = "El id del creador no puede ser nulo")
-    private Long creatorId;
 }
