@@ -1,7 +1,7 @@
 package com.example.crowdfundingplatform.service;
 
+import com.example.crowdfundingplatform.domain.dto.CampaignDTO;
 import com.example.crowdfundingplatform.domain.entity.Campaign;
-import com.example.crowdfundingplatform.dto.CampaignDTO;
 import com.example.crowdfundingplatform.repository.CampaignRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
