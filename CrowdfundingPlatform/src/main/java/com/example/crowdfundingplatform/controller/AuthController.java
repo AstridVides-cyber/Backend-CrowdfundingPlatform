@@ -3,6 +3,7 @@ package com.example.crowdfundingplatform.controller;
 import com.example.crowdfundingplatform.domain.dto.request.LoginRequest;
 import com.example.crowdfundingplatform.domain.dto.request.RegisterRequest;
 import com.example.crowdfundingplatform.domain.dto.response.AuthTokenResponse;
+import com.example.crowdfundingplatform.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
