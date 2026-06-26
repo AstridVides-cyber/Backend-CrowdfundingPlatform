@@ -16,3 +16,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+  stripe:
+    secret-key: ${SK_TEST}
+    publishable-key: ${PK_TEST}
