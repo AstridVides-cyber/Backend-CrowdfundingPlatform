@@ -34,12 +34,12 @@ class CampaignServiceImplTest {
     @Test
     void approveCampaign_ShouldSetStatusToActive_WhenPending() {
         // Arrange
-        User creaor = User.builder().id(1L).name("Test Creator").build();
+        User creator = User.builder().id(1L).name("Test Creator").build();
 
         Campaign campaign = Campaign.builder()
                 .id(1L)
                 .status(CampaignStatus.PENDING)
-                .creator(creator) // <--- ESTO ES LO QUE FALTABA
+                .creator(creator)
                 .build();
 
         when(campaignRepository.findById(1L)).thenReturn(Optional.of(campaign));
