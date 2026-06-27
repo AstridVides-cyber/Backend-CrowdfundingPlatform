@@ -15,7 +15,7 @@ public class ExportServiceImpl implements ExportService {
     private final List<ExportStrategy> exporters;
 
     @Override
-    public String exportCampaigns(String format) {
+    public byte[] exportCampaigns(String format) {
         return exporters.stream()
                 .filter(e -> e.getFormat().equalsIgnoreCase(format))
                 .findFirst()

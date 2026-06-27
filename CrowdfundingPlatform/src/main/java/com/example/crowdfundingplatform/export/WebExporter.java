@@ -8,7 +8,7 @@ import java.util.List;
 public class WebExporter implements ExportStrategy {
 
     @Override
-    public String export(List<Campaign> campaigns) {
+    public byte[] export(List<Campaign> campaigns) {
         StringBuilder sb = new StringBuilder();
         sb.append("<campaigns>\n");
         for (Campaign c : campaigns) {
@@ -20,7 +20,7 @@ public class WebExporter implements ExportStrategy {
                     .append("  </campaign>\n");
         }
         sb.append("</campaigns>");
-        return sb.toString();
+        return sb.toString().getBytes(); // Convertido a bytes
     }
 
     @Override

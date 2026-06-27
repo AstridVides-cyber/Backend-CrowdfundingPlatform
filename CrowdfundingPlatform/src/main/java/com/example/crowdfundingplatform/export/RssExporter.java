@@ -8,7 +8,7 @@ import java.util.List;
 public class RssExporter implements ExportStrategy {
 
     @Override
-    public String export(List<Campaign> campaigns) {
+    public byte[] export(List<Campaign> campaigns) {
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         sb.append("<rss version=\"2.0\">\n<channel>\n");
@@ -21,7 +21,7 @@ public class RssExporter implements ExportStrategy {
                     .append("  </item>\n");
         }
         sb.append("</channel>\n</rss>");
-        return sb.toString();
+        return sb.toString().getBytes(); // Convertido a bytes
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.util.List;
 public class CsvExporter implements ExportStrategy {
 
     @Override
-    public String export(List<Campaign> campaigns) {
+    public byte[] export(List<Campaign> campaigns) {
         StringBuilder sb = new StringBuilder();
         sb.append("id,title,goal,status,category,location\n");
         for (Campaign c : campaigns) {
@@ -19,7 +19,7 @@ public class CsvExporter implements ExportStrategy {
                     .append(c.getCategory()).append(",")
                     .append(c.getLocation()).append("\n");
         }
-        return sb.toString();
+        return sb.toString().getBytes(); // <--- AQUÍ ESTABA EL ERROR
     }
 
     @Override
