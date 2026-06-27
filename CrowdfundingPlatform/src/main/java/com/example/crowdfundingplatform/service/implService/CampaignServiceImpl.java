@@ -24,9 +24,6 @@ public class CampaignServiceImpl implements CampaignService {
 
     @Override
     public CampaignDetailResponse createCampaign(CreateCampaignRequest request) {
-        User creator = userRepository.findById(request.getCreatorId())
-                .orElseThrow(() -> new ResourceNotFoundException("Creator no encontrado"));
-
         Campaign campaign = Campaign.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
@@ -36,7 +33,6 @@ public class CampaignServiceImpl implements CampaignService {
                 .category(request.getCategory())
                 .location(request.getLocation())
                 .isFeatured(request.getIsFeatured() != null ? request.getIsFeatured() : false)
-                .creator(creator)
                 .build();
 
         return mapToResponse(campaignRepository.save(campaign));

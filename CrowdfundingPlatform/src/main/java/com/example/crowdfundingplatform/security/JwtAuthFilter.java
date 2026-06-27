@@ -26,36 +26,29 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        // Obtener el header Authorization
         String authHeader = request.getHeader("Authorization");
 
-        // Si no tiene token, continuar sin autenticar
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Extraer el token quitando "Bearer "
         String token = authHeader.substring(7);
+        String email = jwtUtil.extractEmail(token);
 
-        // Si el email es válido y no hay autenticación previa
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
-            // Cargar el usuario de la base de datos
             var userDetails = userDetailsService.loadUserByUsername(email);
 
-            // Validar el token
             if (jwtUtil.validateToken(token)) {
-                    // Crear la autenticación y meterla en el contexto
                 var authToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities()
                 );
                 authToken.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request)
-                );SecurityContextHolder.getContext().setAuthentication(authToken);
+                );
+                SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
-        // Continuar con el siguiente filtro
         filterChain.doFilter(request, response);
     }
 }
