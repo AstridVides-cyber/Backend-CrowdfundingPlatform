@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: CrowdfundingPlatform
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  stripe:
+    secret-key: ${SK_TEST}
+    publishable-key: ${PK_TEST}
