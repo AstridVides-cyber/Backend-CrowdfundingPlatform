@@ -1,89 +1,51 @@
-# Backend-CrowdfundingPlatform
+# Backend CrowdfundingPlatform
 
-## ¿De qué trata este repositorio?
-Backend de una plataforma de **crowdfunding** con autenticación JWT, manejo de campañas, recompensas, promesas de donación (pledges), reportes de fraude, pagos con Stripe y exportación de campañas.
+## Resumen del proyecto
+Backend de una plataforma de crowdfunding para gestionar campañas de recaudación, recompensas, aportes financieros y moderación administrativa con estas capacidades principales:
 
-Arquitectura general:
-- API REST con Spring Boot.
-- Capas de `controller`, `service`, `repository` y entidades JPA.
-- Base de datos PostgreSQL.
-- Seguridad con Spring Security + JWT.
+- Gestión completa de campañas y recompensas.
+- Procesamiento seguro de pagos con Stripe.
+- Autenticación y autorización por roles con JWT.
+- Moderación de campañas y manejo de reportes de fraude.
+- Exportación de datos del negocio en CSV, RSS y WEB.
 
-## Roles del sistema
-Actualmente hay **3 roles**:
-- `ADMIN`
-- `CREATOR`
-- `SPONSOR`
+## Arquitectura
+El proyecto sigue una arquitectura monolítica limpia, organizada por capas para separar responsabilidades y mantener el código escalable:
 
-Reglas globales de seguridad:
-- `/api/auth/**` es público.
-- `/api/admin/**` solo `ADMIN`.
-- El resto requiere autenticación JWT.
+- `config`: configuraciones globales, seguridad y CORS.
+- `controller`: endpoints REST y mapeo de entrada y salida.
+- `domain`: entidades, enums y DTOs.
+- `repository`: acceso a datos con Spring Data JPA.
+- `security`: filtros JWT, autenticación y utilidades de seguridad.
+- `service`: reglas de negocio e integraciones externas.
+- `export`: estrategias de exportación de datos.
 
-## ¿Cómo funciona (flujo general)?
-1. El usuario se registra/inicia sesión y recibe token JWT.
-2. Un `CREATOR` crea campañas y recompensas.
-3. Un `ADMIN` aprueba/rechaza campañas y modera reportes.
-4. Un `SPONSOR` hace pledges y procesa pago.
-5. Se pueden reportar campañas por fraude.
-6. `ADMIN`/`CREATOR` pueden exportar campañas (CSV, RSS, WEB).
+## Roles y permisos
+La plataforma maneja tres roles principales:
 
-## Endpoints identificados
-En `develop` hay **34 endpoints** en total.
+- `ADMIN`: administra la plataforma, modera campañas, resuelve fraudes y gestiona reembolsos.
+- `CREATOR`: crea y administra campañas y recompensas propias, además de acceder a exportaciones.
+- `SPONSOR`: descubre campañas, crea pledges y completa pagos de forma segura.
 
-### 1) Auth (`/api/auth`) — 2 endpoints
-- `POST /register`
-- `POST /login`
+Reglas generales de acceso:
 
-### 2) Campaigns (`/api/campaigns`) — 12 endpoints
-- `POST /` *(CREATOR)*
-- `GET /`
-- `GET /{id}`
-- `GET /status/{status}`
-- `GET /category/{category}`
-- `GET /location/{location}`
-- `GET /featured`
-- `GET /creator/{creatorId}`
-- `PUT /{id}` *(CREATOR)*
-- `DELETE /{id}` *(CREATOR o ADMIN)*
-- `PATCH /{id}/approve` *(ADMIN)*
-- `PATCH /{id}/reject` *(ADMIN)*
+- `/api/auth/**` es público para registro e inicio de sesión.
+- Las rutas protegidas requieren token JWT.
+- Las acciones administrativas están restringidas a `ADMIN`.
 
-### 3) Rewards (`/api/rewards`) — 5 endpoints
-- `POST /` *(CREATOR)*
-- `GET /?campaignId=...`
-- `GET /{id}`
-- `PUT /{id}` *(CREATOR)*
-- `DELETE /{id}` *(CREATOR)*
+## Módulos funcionales
 
-### 4) Pledges (`/api/pledges`) — 4 endpoints
-- `POST /` *(SPONSOR)*
-- `GET /my` *(SPONSOR)*
-- `GET /?campaignId=...` *(CREATOR o ADMIN)*
-- `PATCH /{id}/refund` *(ADMIN)*
-
-### 5) Payments (`/api/payments`) — 2 endpoints
-- `POST /create-intent` *(SPONSOR)*
-- `POST /confirm/{pledgeId}?paymentIntentId=...` *(SPONSOR)*
-
-### 6) Fraud Reports (`/api/fraud-reports`) — 3 endpoints
-- `POST /` *(usuario autenticado)*
-- `GET /` *(ADMIN)*
-- `PATCH /{id}/resolve` *(ADMIN)*
-
-### 7) Admin (`/api/admin`) — 5 endpoints
-- `GET /campaigns/pending`
-- `PATCH /campaigns/{id}/approve`
-- `PATCH /campaigns/{id}/reject`
-- `GET /fraud-reports`
-- `PATCH /fraud-reports/{id}/resolve`
-
-### 8) Export (`/api/export`) — 1 endpoint
-- `GET /{format}` *(ADMIN o CREATOR)*
+- Campañas: CRUD completo, filtros por estado y visibilidad destacada.
+- Recompensas: creación, edición y eliminación asociadas a campañas.
+- Pledges: registro de aportes y seguimiento del estado de financiamiento.
+- Pagos: creación y confirmación de Payment Intents con Stripe.
+- Fraude: reportes de campañas sospechosas y resolución administrativa.
+- Exportación: generación de salidas en CSV, RSS y WEB.
 
 ## Stack principal
+
 - Java 21
-- Spring Boot 3.3
+- Spring Boot
 - Spring Security + JWT
 - Spring Data JPA
 - PostgreSQL
