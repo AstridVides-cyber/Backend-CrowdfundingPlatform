@@ -1,7 +1,7 @@
 package com.example.crowdfundingplatform.controller;
 
 import com.example.crowdfundingplatform.domain.dto.request.CreateCampaignRequest;
-import com.example.crowdfundingplatform.domain.dto.response.CampaignDetailResponse;
+import com.example.crowdfundingplatform.domain.dto.response.GeneralResponse;
 import com.example.crowdfundingplatform.domain.enums.CampaignStatus;
 import com.example.crowdfundingplatform.service.CampaignService;
 import jakarta.validation.Valid;
@@ -12,7 +12,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/campaigns")
@@ -23,77 +24,69 @@ public class CampaignController {
 
     @PostMapping
     @PreAuthorize("hasRole('CREATOR')")
-    public ResponseEntity<CampaignDetailResponse> createCampaign(
-            @Valid @RequestBody CreateCampaignRequest request,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(campaignService.createCampaign(request, userDetails.getUsername()));
+    public ResponseEntity<GeneralResponse> createCampaign(@Valid @RequestBody CreateCampaignRequest request, @AuthenticationPrincipal UserDetails userDetails) {
+        return buildResponse("Creada", HttpStatus.CREATED, campaignService.createCampaign(request, userDetails.getUsername()));
     }
 
     @GetMapping
-    public ResponseEntity<List<CampaignDetailResponse>> getAllCampaigns() {
-        return ResponseEntity.ok(campaignService.getAllCampaigns());
+    public ResponseEntity<GeneralResponse> getAllCampaigns() {
+        return buildResponse("OK", HttpStatus.OK, campaignService.getAllCampaigns());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CampaignDetailResponse> getCampaignById(@PathVariable Long id) {
-        return ResponseEntity.ok(campaignService.getCampaignById(id));
+    public ResponseEntity<GeneralResponse> getCampaignById(@PathVariable Long id) {
+        return buildResponse("OK", HttpStatus.OK, campaignService.getCampaignById(id));
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<CampaignDetailResponse>> getCampaignsByStatus(
-            @PathVariable CampaignStatus status) {
-        return ResponseEntity.ok(campaignService.getCampaignsByStatus(status));
+    public ResponseEntity<GeneralResponse> getCampaignsByStatus(@PathVariable CampaignStatus status) {
+        return buildResponse("OK", HttpStatus.OK, campaignService.getCampaignsByStatus(status));
     }
 
     @GetMapping("/category/{category}")
-    public ResponseEntity<List<CampaignDetailResponse>> getCampaignsByCategory(
-            @PathVariable String category) {
-        return ResponseEntity.ok(campaignService.getCampaignsByCategory(category));
+    public ResponseEntity<GeneralResponse> getCampaignsByCategory(@PathVariable String category) {
+        return buildResponse("OK", HttpStatus.OK, campaignService.getCampaignsByCategory(category));
     }
 
     @GetMapping("/location/{location}")
-    public ResponseEntity<List<CampaignDetailResponse>> getCampaignsByLocation(
-            @PathVariable String location) {
-        return ResponseEntity.ok(campaignService.getCampaignsByLocation(location));
+    public ResponseEntity<GeneralResponse> getCampaignsByLocation(@PathVariable String location) {
+        return buildResponse("OK", HttpStatus.OK, campaignService.getCampaignsByLocation(location));
     }
 
     @GetMapping("/featured")
-    public ResponseEntity<List<CampaignDetailResponse>> getFeaturedCampaigns() {
-        return ResponseEntity.ok(campaignService.getFeaturedCampaigns());
-    }
-
-    @GetMapping("/creator/{creatorId}")
-    public ResponseEntity<List<CampaignDetailResponse>> getCampaignsByCreator(
-            @PathVariable Long creatorId) {
-        return ResponseEntity.ok(campaignService.getCampaignsByCreator(creatorId));
+    public ResponseEntity<GeneralResponse> getFeaturedCampaigns() {
+        return buildResponse("OK", HttpStatus.OK, campaignService.getFeaturedCampaigns());
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('CREATOR')")
-    public ResponseEntity<CampaignDetailResponse> updateCampaign(
-            @PathVariable Long id,
-            @Valid @RequestBody CreateCampaignRequest request,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(campaignService.updateCampaign(id, request, userDetails.getUsername()));
+    public ResponseEntity<GeneralResponse> updateCampaign(@PathVariable Long id, @Valid @RequestBody CreateCampaignRequest request, @AuthenticationPrincipal UserDetails userDetails) {
+        return buildResponse("Actualizada", HttpStatus.OK, campaignService.updateCampaign(id, request, userDetails.getUsername()));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('CREATOR', 'ADMIN')")
-    public ResponseEntity<Void> deleteCampaign(@PathVariable Long id) {
+    public ResponseEntity<GeneralResponse> deleteCampaign(@PathVariable Long id) {
         campaignService.deleteCampaign(id);
-        return ResponseEntity.noContent().build();
+        return buildResponse("Eliminada", HttpStatus.NO_CONTENT, null);
     }
 
     @PatchMapping("/{id}/approve")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CampaignDetailResponse> approveCampaign(@PathVariable Long id) {
-        return ResponseEntity.ok(campaignService.approveCampaign(id));
+    public ResponseEntity<GeneralResponse> approveCampaign(@PathVariable Long id) {
+        return buildResponse("Aprobada", HttpStatus.OK, campaignService.approveCampaign(id));
     }
 
     @PatchMapping("/{id}/reject")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CampaignDetailResponse> rejectCampaign(@PathVariable Long id) {
-        return ResponseEntity.ok(campaignService.rejectCampaign(id));
+    public ResponseEntity<GeneralResponse> rejectCampaign(@PathVariable Long id) {
+        return buildResponse("Rechazada", HttpStatus.OK, campaignService.rejectCampaign(id));
+    }
+
+    private ResponseEntity<GeneralResponse> buildResponse(String message, HttpStatus status, Object data) {
+        String uri = ServletUriComponentsBuilder.fromCurrentRequestUri().build().getPath();
+        return ResponseEntity.status(status).body(GeneralResponse.builder()
+                .uri(uri).message(message).status(status.value())
+                .time(LocalDateTime.now()).data(data).build());
     }
 }

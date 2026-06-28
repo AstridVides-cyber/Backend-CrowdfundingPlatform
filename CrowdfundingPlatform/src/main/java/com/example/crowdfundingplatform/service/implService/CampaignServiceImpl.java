@@ -14,7 +14,6 @@ import com.example.crowdfundingplatform.service.CampaignService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +27,6 @@ public class CampaignServiceImpl implements CampaignService {
     public CampaignDetailResponse createCampaign(CreateCampaignRequest request, String creatorEmail) {
         User creator = userRepository.findByEmail(creatorEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("Creator no encontrado"));
-
         Campaign campaign = campaignMapper.toEntity(request, creator);
         return campaignMapper.toResponse(campaignRepository.save(campaign));
     }
@@ -40,58 +38,38 @@ public class CampaignServiceImpl implements CampaignService {
 
     @Override
     public List<CampaignDetailResponse> getAllCampaigns() {
-        return campaignRepository.findAll()
-                .stream()
-                .map(campaignMapper::toResponse)
-                .collect(Collectors.toList());
+        return campaignMapper.toListResponse(campaignRepository.findAll());
     }
 
     @Override
     public List<CampaignDetailResponse> getCampaignsByStatus(CampaignStatus status) {
-        return campaignRepository.findByStatus(status)
-                .stream()
-                .map(campaignMapper::toResponse)
-                .collect(Collectors.toList());
+        return campaignMapper.toListResponse(campaignRepository.findByStatus(status));
     }
 
     @Override
     public List<CampaignDetailResponse> getCampaignsByCategory(String category) {
-        return campaignRepository.findByCategory(category)
-                .stream()
-                .map(campaignMapper::toResponse)
-                .collect(Collectors.toList());
+        return campaignMapper.toListResponse(campaignRepository.findByCategory(category));
     }
 
     @Override
     public List<CampaignDetailResponse> getCampaignsByLocation(String location) {
-        return campaignRepository.findByLocation(location)
-                .stream()
-                .map(campaignMapper::toResponse)
-                .collect(Collectors.toList());
+        return campaignMapper.toListResponse(campaignRepository.findByLocation(location));
     }
 
     @Override
     public List<CampaignDetailResponse> getFeaturedCampaigns() {
-        return campaignRepository.findByIsFeaturedTrue()
-                .stream()
-                .map(campaignMapper::toResponse)
-                .collect(Collectors.toList());
+        return campaignMapper.toListResponse(campaignRepository.findByIsFeaturedTrue());
     }
 
     @Override
     public List<CampaignDetailResponse> getCampaignsByCreator(Long creatorId) {
-        return campaignRepository.findByCreatorId(creatorId)
-                .stream()
-                .map(campaignMapper::toResponse)
-                .collect(Collectors.toList());
+        return campaignMapper.toListResponse(campaignRepository.findByCreatorId(creatorId));
     }
 
     @Override
     public CampaignDetailResponse approveCampaign(Long id) {
         Campaign campaign = findById(id);
-        if (campaign.getStatus() != CampaignStatus.PENDING) {
-            throw new BadRequestException("Solo se pueden aprobar campañas en estado PENDING");
-        }
+        if (campaign.getStatus() != CampaignStatus.PENDING) throw new BadRequestException("Solo PENDING");
         campaign.setStatus(CampaignStatus.ACTIVE);
         return campaignMapper.toResponse(campaignRepository.save(campaign));
     }
@@ -99,9 +77,7 @@ public class CampaignServiceImpl implements CampaignService {
     @Override
     public CampaignDetailResponse rejectCampaign(Long id) {
         Campaign campaign = findById(id);
-        if (campaign.getStatus() != CampaignStatus.PENDING) {
-            throw new BadRequestException("Solo se pueden rechazar campañas en estado PENDING");
-        }
+        if (campaign.getStatus() != CampaignStatus.PENDING) throw new BadRequestException("Solo PENDING");
         campaign.setStatus(CampaignStatus.CANCELLED);
         return campaignMapper.toResponse(campaignRepository.save(campaign));
     }
@@ -120,6 +96,6 @@ public class CampaignServiceImpl implements CampaignService {
 
     private Campaign findById(Long id) {
         return campaignRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Campaña no encontrada con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Campaña no encontrada: " + id));
     }
 }

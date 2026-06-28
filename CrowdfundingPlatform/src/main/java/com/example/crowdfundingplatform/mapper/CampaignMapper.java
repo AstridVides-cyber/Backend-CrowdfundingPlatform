@@ -5,6 +5,7 @@ import com.example.crowdfundingplatform.domain.dto.response.CampaignDetailRespon
 import com.example.crowdfundingplatform.domain.entity.Campaign;
 import com.example.crowdfundingplatform.domain.entity.User;
 import org.springframework.stereotype.Component;
+import java.util.List;
 
 @Component
 public class CampaignMapper {
@@ -39,6 +40,10 @@ public class CampaignMapper {
                 .creatorId(campaign.getCreator().getId())
                 .creatorName(campaign.getCreator().getName())
                 .build();
+    }
+
+    public List<CampaignDetailResponse> toListResponse(List<Campaign> campaigns) {
+        return campaigns.stream().map(this::toResponse).toList();
     }
 
     public void updateEntity(Campaign campaign, CreateCampaignRequest request) {
