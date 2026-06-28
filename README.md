@@ -1,7 +1,5 @@
 # Backend-CrowdfundingPlatform
 
-> Resumen basado en la rama `develop` (donde está la versión más reciente).
-
 ## ¿De qué trata este repositorio?
 Backend de una plataforma de **crowdfunding** con autenticación JWT, manejo de campañas, recompensas, promesas de donación (pledges), reportes de fraude, pagos con Stripe y exportación de campañas.
 
