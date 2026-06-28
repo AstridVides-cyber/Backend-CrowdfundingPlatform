@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -22,9 +24,10 @@ public class CampaignController {
     @PostMapping
     @PreAuthorize("hasRole('CREATOR')")
     public ResponseEntity<CampaignDetailResponse> createCampaign(
-            @Valid @RequestBody CreateCampaignRequest request) {
+            @Valid @RequestBody CreateCampaignRequest request,
+            @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(campaignService.createCampaign(request));
+                .body(campaignService.createCampaign(request, userDetails.getUsername()));
     }
 
     @GetMapping
@@ -70,8 +73,9 @@ public class CampaignController {
     @PreAuthorize("hasRole('CREATOR')")
     public ResponseEntity<CampaignDetailResponse> updateCampaign(
             @PathVariable Long id,
-            @Valid @RequestBody CreateCampaignRequest request) {
-        return ResponseEntity.ok(campaignService.updateCampaign(id, request));
+            @Valid @RequestBody CreateCampaignRequest request,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(campaignService.updateCampaign(id, request, userDetails.getUsername()));
     }
 
     @DeleteMapping("/{id}")

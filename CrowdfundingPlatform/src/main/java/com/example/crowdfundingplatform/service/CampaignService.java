@@ -6,7 +6,7 @@ import com.example.crowdfundingplatform.domain.enums.CampaignStatus;
 import java.util.List;
 
 public interface CampaignService {
-    CampaignDetailResponse createCampaign(CreateCampaignRequest request);
+    CampaignDetailResponse createCampaign(CreateCampaignRequest request, String creatorEmail);
     CampaignDetailResponse getCampaignById(Long id);
     List<CampaignDetailResponse> getAllCampaigns();
     List<CampaignDetailResponse> getCampaignsByStatus(CampaignStatus status);
@@ -16,6 +16,6 @@ public interface CampaignService {
     List<CampaignDetailResponse> getCampaignsByCreator(Long creatorId);
     CampaignDetailResponse approveCampaign(Long id);
     CampaignDetailResponse rejectCampaign(Long id);
-    CampaignDetailResponse updateCampaign(Long id, CreateCampaignRequest request);
+    CampaignDetailResponse updateCampaign(Long id, CreateCampaignRequest request, String creatorEmail);
     void deleteCampaign(Long id);
 }

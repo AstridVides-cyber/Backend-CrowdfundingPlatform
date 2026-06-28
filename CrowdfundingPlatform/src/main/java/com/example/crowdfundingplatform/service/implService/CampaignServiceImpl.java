@@ -7,6 +7,7 @@ import com.example.crowdfundingplatform.domain.entity.User;
 import com.example.crowdfundingplatform.domain.enums.CampaignStatus;
 import com.example.crowdfundingplatform.exception.BadRequestException;
 import com.example.crowdfundingplatform.exception.ResourceNotFoundException;
+import com.example.crowdfundingplatform.mapper.CampaignMapper;
 import com.example.crowdfundingplatform.repository.CampaignRepository;
 import com.example.crowdfundingplatform.repository.UserRepository;
 import com.example.crowdfundingplatform.service.CampaignService;
@@ -21,67 +22,67 @@ public class CampaignServiceImpl implements CampaignService {
 
     private final CampaignRepository campaignRepository;
     private final UserRepository userRepository;
+    private final CampaignMapper campaignMapper;
 
     @Override
-    public CampaignDetailResponse createCampaign(CreateCampaignRequest request) {
-        Campaign campaign = Campaign.builder()
-                .title(request.getTitle())
-                .description(request.getDescription())
-                .goal(request.getGoal())
-                .goalType(request.getGoalType())
-                .deadline(request.getDeadline())
-                .category(request.getCategory())
-                .location(request.getLocation())
-                .isFeatured(request.getIsFeatured() != null ? request.getIsFeatured() : false)
-                .build();
+    public CampaignDetailResponse createCampaign(CreateCampaignRequest request, String creatorEmail) {
+        User creator = userRepository.findByEmail(creatorEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("Creator no encontrado"));
 
-        return mapToResponse(campaignRepository.save(campaign));
+        Campaign campaign = campaignMapper.toEntity(request, creator);
+        return campaignMapper.toResponse(campaignRepository.save(campaign));
     }
 
     @Override
     public CampaignDetailResponse getCampaignById(Long id) {
-        return mapToResponse(findById(id));
+        return campaignMapper.toResponse(findById(id));
     }
 
     @Override
     public List<CampaignDetailResponse> getAllCampaigns() {
         return campaignRepository.findAll()
-                .stream().map(this::mapToResponse)
+                .stream()
+                .map(campaignMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<CampaignDetailResponse> getCampaignsByStatus(CampaignStatus status) {
         return campaignRepository.findByStatus(status)
-                .stream().map(this::mapToResponse)
+                .stream()
+                .map(campaignMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<CampaignDetailResponse> getCampaignsByCategory(String category) {
         return campaignRepository.findByCategory(category)
-                .stream().map(this::mapToResponse)
+                .stream()
+                .map(campaignMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<CampaignDetailResponse> getCampaignsByLocation(String location) {
         return campaignRepository.findByLocation(location)
-                .stream().map(this::mapToResponse)
+                .stream()
+                .map(campaignMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<CampaignDetailResponse> getFeaturedCampaigns() {
         return campaignRepository.findByIsFeaturedTrue()
-                .stream().map(this::mapToResponse)
+                .stream()
+                .map(campaignMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<CampaignDetailResponse> getCampaignsByCreator(Long creatorId) {
         return campaignRepository.findByCreatorId(creatorId)
-                .stream().map(this::mapToResponse)
+                .stream()
+                .map(campaignMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
@@ -92,7 +93,7 @@ public class CampaignServiceImpl implements CampaignService {
             throw new BadRequestException("Solo se pueden aprobar campañas en estado PENDING");
         }
         campaign.setStatus(CampaignStatus.ACTIVE);
-        return mapToResponse(campaignRepository.save(campaign));
+        return campaignMapper.toResponse(campaignRepository.save(campaign));
     }
 
     @Override
@@ -102,20 +103,14 @@ public class CampaignServiceImpl implements CampaignService {
             throw new BadRequestException("Solo se pueden rechazar campañas en estado PENDING");
         }
         campaign.setStatus(CampaignStatus.CANCELLED);
-        return mapToResponse(campaignRepository.save(campaign));
+        return campaignMapper.toResponse(campaignRepository.save(campaign));
     }
 
     @Override
-    public CampaignDetailResponse updateCampaign(Long id, CreateCampaignRequest request) {
+    public CampaignDetailResponse updateCampaign(Long id, CreateCampaignRequest request, String creatorEmail) {
         Campaign campaign = findById(id);
-        campaign.setTitle(request.getTitle());
-        campaign.setDescription(request.getDescription());
-        campaign.setGoal(request.getGoal());
-        campaign.setGoalType(request.getGoalType());
-        campaign.setDeadline(request.getDeadline());
-        campaign.setCategory(request.getCategory());
-        campaign.setLocation(request.getLocation());
-        return mapToResponse(campaignRepository.save(campaign));
+        campaignMapper.updateEntity(campaign, request);
+        return campaignMapper.toResponse(campaignRepository.save(campaign));
     }
 
     @Override
@@ -126,23 +121,5 @@ public class CampaignServiceImpl implements CampaignService {
     private Campaign findById(Long id) {
         return campaignRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Campaña no encontrada con id: " + id));
-    }
-
-    private CampaignDetailResponse mapToResponse(Campaign campaign) {
-        return CampaignDetailResponse.builder()
-                .id(campaign.getId())
-                .title(campaign.getTitle())
-                .description(campaign.getDescription())
-                .goal(campaign.getGoal())
-                .goalType(campaign.getGoalType())
-                .deadline(campaign.getDeadline())
-                .status(campaign.getStatus())
-                .category(campaign.getCategory())
-                .location(campaign.getLocation())
-                .isFeatured(campaign.getIsFeatured())
-                .createdAt(campaign.getCreatedAt())
-                .creatorId(campaign.getCreator().getId())
-                .creatorName(campaign.getCreator().getName())
-                .build();
     }
 }
