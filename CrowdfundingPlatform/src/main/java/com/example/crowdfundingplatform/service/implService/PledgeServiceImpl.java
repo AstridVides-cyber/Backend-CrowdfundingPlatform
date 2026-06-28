@@ -19,7 +19,7 @@ import com.example.crowdfundingplatform.service.PledgeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.stream.Collectors;
+import com.example.crowdfundingplatform.mapper.PledgeMapper;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +29,7 @@ public class PledgeServiceImpl implements PledgeService {
     private final CampaignRepository campaignRepository;
     private final RewardRepository rewardRepository;
     private final UserRepository userRepository;
+    private final PledgeMapper pledgeMapper;
 
     @Override
     public PledgeDetailResponse createPledge(CreatePledgeRequest request, String sponsorEmail) {
@@ -52,25 +53,14 @@ public class PledgeServiceImpl implements PledgeService {
                 throw new BadRequestException("El monto no alcanza el mínimo de la recompensa elegida");
             }
         }
-
-        Pledge pledge = Pledge.builder()
-                .amount(request.getAmount())
-                .charged(false)
-                .refunded(false)
-                .sponsor(sponsor)
-                .campaign(campaign)
-                .reward(reward)
-                .build();
-
-        return mapToResponse(pledgeRepository.save(pledge));
+        Pledge pledge = pledgeMapper.toEntity(request, sponsor, campaign, reward);
+        return pledgeMapper.toResponse(pledgeRepository.save(pledge));
     }
 
     @Override
     public List<PledgeDetailResponse> getMyPledges(String sponsorEmail) {
         User sponsor = getUserByEmail(sponsorEmail);
-        return pledgeRepository.findBySponsorId(sponsor.getId()).stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+        return pledgeMapper.toListResponse(pledgeRepository.findBySponsorId(sponsor.getId()));
     }
 
     @Override
@@ -84,9 +74,7 @@ public class PledgeServiceImpl implements PledgeService {
             throw new UnauthorizedException("No tienes permiso para ver las promesas de esta campaña");
         }
 
-        return pledgeRepository.findByCampaignId(campaignId).stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+        return pledgeMapper.toListResponse(pledgeRepository.findByCampaignId(campaignId));
     }
 
     @Override
@@ -100,7 +88,7 @@ public class PledgeServiceImpl implements PledgeService {
         }
 
         pledge.setRefunded(true);
-        return mapToResponse(pledgeRepository.save(pledge));
+        return pledgeMapper.toResponse(pledgeRepository.save(pledge));
     }
 
     private User getUserByEmail(String email) {
@@ -114,19 +102,4 @@ public class PledgeServiceImpl implements PledgeService {
                         "No se encontró la campaña con el ID: " + campaignId));
     }
 
-    private PledgeDetailResponse mapToResponse(Pledge pledge) {
-        return PledgeDetailResponse.builder()
-                .id(pledge.getId())
-                .amount(pledge.getAmount())
-                .charged(pledge.getCharged())
-                .refunded(pledge.getRefunded())
-                .createdAt(pledge.getCreatedAt())
-                .sponsorId(pledge.getSponsor().getId())
-                .sponsorName(pledge.getSponsor().getName())
-                .campaignId(pledge.getCampaign().getId())
-                .campaignTitle(pledge.getCampaign().getTitle())
-                .rewardId(pledge.getReward() != null ? pledge.getReward().getId() : null)
-                .rewardTitle(pledge.getReward() != null ? pledge.getReward().getTitle() : null)
-                .build();
-    }
 }
