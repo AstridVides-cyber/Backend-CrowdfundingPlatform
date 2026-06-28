@@ -15,7 +15,6 @@ import com.example.crowdfundingplatform.service.RewardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,9 +35,9 @@ public class RewardServiceImpl implements RewardService {
 
     @Override
     public List<RewardDetailResponse> getRewardsByCampaign(Long campaignId) {
-        return rewardRepository.findByCampaignId(campaignId).stream()
-                .map(rewardMapper::toResponse)
-                .collect(Collectors.toList());
+        return rewardMapper.toListResponse(
+                rewardRepository
+                .findByCampaignId(campaignId));
     }
 
     @Override

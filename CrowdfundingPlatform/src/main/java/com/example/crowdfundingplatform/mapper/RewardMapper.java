@@ -6,6 +6,8 @@ import com.example.crowdfundingplatform.domain.entity.Campaign;
 import com.example.crowdfundingplatform.domain.entity.Reward;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class RewardMapper {
 
@@ -36,5 +38,9 @@ public class RewardMapper {
                 .campaignId(reward.getCampaign().getId())
                 .campaignTitle(reward.getCampaign().getTitle())
                 .build();
+    }
+
+    public List<RewardDetailResponse> toListResponse(List<Reward> listResponse){
+        return listResponse.stream().map(this::toResponse).toList();
     }
 }

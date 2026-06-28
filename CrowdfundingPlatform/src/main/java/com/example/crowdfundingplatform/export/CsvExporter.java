@@ -19,7 +19,7 @@ public class CsvExporter implements ExportStrategy {
                     .append(c.getCategory()).append(",")
                     .append(c.getLocation()).append("\n");
         }
-        return sb.toString().getBytes(); // <--- AQUÍ ESTABA EL ERROR
+        return sb.toString().getBytes();
     }
 
     @Override
