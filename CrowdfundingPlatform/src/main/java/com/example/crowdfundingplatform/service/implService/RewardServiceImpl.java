@@ -7,6 +7,7 @@ import com.example.crowdfundingplatform.domain.entity.Reward;
 import com.example.crowdfundingplatform.domain.entity.User;
 import com.example.crowdfundingplatform.exception.ResourceNotFoundException;
 import com.example.crowdfundingplatform.exception.UnauthorizedException;
+import com.example.crowdfundingplatform.mapper.RewardMapper;
 import com.example.crowdfundingplatform.repository.CampaignRepository;
 import com.example.crowdfundingplatform.repository.RewardRepository;
 import com.example.crowdfundingplatform.repository.UserRepository;
@@ -23,34 +24,26 @@ public class RewardServiceImpl implements RewardService {
     private final RewardRepository rewardRepository;
     private final CampaignRepository campaignRepository;
     private final UserRepository userRepository;
+    private final RewardMapper rewardMapper;
 
     @Override
     public RewardDetailResponse createReward(CreateRewardRequest request, String creatorEmail) {
         User creator = getUserByEmail(creatorEmail);
         Campaign campaign = getCampaignById(request.getCampaignId());
         validateOwnership(campaign, creator);
-
-        Reward reward = Reward.builder()
-                .title(request.getTitle())
-                .description(request.getDescription())
-                .minimumAmount(request.getMinimumAmount())
-                .quantity(request.getQuantity())
-                .campaign(campaign)
-                .build();
-
-        return mapToResponse(rewardRepository.save(reward));
+        return rewardMapper.toResponse(rewardRepository.save(rewardMapper.toEntity(request, campaign)));
     }
 
     @Override
     public List<RewardDetailResponse> getRewardsByCampaign(Long campaignId) {
         return rewardRepository.findByCampaignId(campaignId).stream()
-                .map(this::mapToResponse)
+                .map(rewardMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
     public RewardDetailResponse getRewardById(Long id) {
-        return mapToResponse(getRewardEntity(id));
+        return rewardMapper.toResponse(getRewardEntity(id));
     }
 
     @Override
@@ -58,13 +51,8 @@ public class RewardServiceImpl implements RewardService {
         User creator = getUserByEmail(creatorEmail);
         Reward reward = getRewardEntity(id);
         validateOwnership(reward.getCampaign(), creator);
-
-        reward.setTitle(request.getTitle());
-        reward.setDescription(request.getDescription());
-        reward.setMinimumAmount(request.getMinimumAmount());
-        reward.setQuantity(request.getQuantity());
-
-        return mapToResponse(rewardRepository.save(reward));
+        rewardMapper.updateEntity(reward, request);
+        return rewardMapper.toResponse(rewardRepository.save(reward));
     }
 
     @Override
@@ -96,17 +84,5 @@ public class RewardServiceImpl implements RewardService {
         if (!campaign.getCreator().getId().equals(creator.getId())) {
             throw new UnauthorizedException("No puedes modificar recompensas de una campaña que no es tuya");
         }
-    }
-
-    private RewardDetailResponse mapToResponse(Reward reward) {
-        return RewardDetailResponse.builder()
-                .id(reward.getId())
-                .title(reward.getTitle())
-                .description(reward.getDescription())
-                .minimumAmount(reward.getMinimumAmount())
-                .quantity(reward.getQuantity())
-                .campaignId(reward.getCampaign().getId())
-                .campaignTitle(reward.getCampaign().getTitle())
-                .build();
     }
 }
