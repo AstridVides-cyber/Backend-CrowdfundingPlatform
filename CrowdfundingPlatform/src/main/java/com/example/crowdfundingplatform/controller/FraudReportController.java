@@ -1,7 +1,6 @@
 package com.example.crowdfundingplatform.controller;
 
 import com.example.crowdfundingplatform.domain.dto.request.CreateFraudReportRequest;
-import com.example.crowdfundingplatform.domain.dto.response.FraudReportDetailResponse;
 import com.example.crowdfundingplatform.domain.dto.response.GeneralResponse;
 import com.example.crowdfundingplatform.security.JwtAuth;
 import com.example.crowdfundingplatform.service.FraudReportService;
@@ -13,7 +12,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.time.LocalDateTime;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -26,10 +24,10 @@ public class FraudReportController {
 
     // POST - Cualquier usuario autenticado (SPONSOR o CREATOR) reporta una campaña sospechosa
     @PostMapping
-    public ResponseEntity<FraudReportDetailResponse> createReport(
+    public ResponseEntity<GeneralResponse> createReport(
             @Valid @RequestBody CreateFraudReportRequest request,
             @AuthenticationPrincipal JwtAuth principal) {
-        FraudReportDetailResponse response =
+        var response =
                 fraudReportService.createReport(request, principal.getUsername());
         return buildResponse("Reporte creado exitosamente", HttpStatus.CREATED, response);
     }

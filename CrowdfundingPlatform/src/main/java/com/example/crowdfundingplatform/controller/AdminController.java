@@ -1,7 +1,6 @@
 package com.example.crowdfundingplatform.controller;
 
 import com.example.crowdfundingplatform.domain.dto.response.CampaignDetailResponse;
-import com.example.crowdfundingplatform.domain.dto.response.FraudReportDetailResponse;
 import com.example.crowdfundingplatform.domain.dto.response.GeneralResponse;
 import com.example.crowdfundingplatform.domain.enums.CampaignStatus;
 import com.example.crowdfundingplatform.service.CampaignService;
