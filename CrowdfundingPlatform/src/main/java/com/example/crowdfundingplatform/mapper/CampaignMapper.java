@@ -46,13 +46,4 @@ public class CampaignMapper {
         return campaigns.stream().map(this::toResponse).toList();
     }
 
-    public void updateEntity(Campaign campaign, CreateCampaignRequest request) {
-        campaign.setTitle(request.getTitle());
-        campaign.setDescription(request.getDescription());
-        campaign.setGoal(request.getGoal());
-        campaign.setGoalType(request.getGoalType());
-        campaign.setDeadline(request.getDeadline());
-        campaign.setCategory(request.getCategory());
-        campaign.setLocation(request.getLocation());
-    }
 }

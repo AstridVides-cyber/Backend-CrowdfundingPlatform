@@ -20,3 +20,10 @@ spring:
   stripe:
     secret-key: ${SK_TEST}
     publishable-key: ${PK_TEST}
+
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration: ${JWT_EXPIRATION}
+
+  server:
+    port: 8080

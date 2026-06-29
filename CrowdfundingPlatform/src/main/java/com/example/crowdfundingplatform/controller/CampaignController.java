@@ -1,6 +1,7 @@
 package com.example.crowdfundingplatform.controller;
 
 import com.example.crowdfundingplatform.domain.dto.request.CreateCampaignRequest;
+import com.example.crowdfundingplatform.domain.dto.request.UpdateCampaign;
 import com.example.crowdfundingplatform.domain.dto.response.GeneralResponse;
 import com.example.crowdfundingplatform.domain.enums.CampaignStatus;
 import com.example.crowdfundingplatform.service.CampaignService;
@@ -22,13 +23,13 @@ public class CampaignController {
 
     private final CampaignService campaignService;
 
-    @PostMapping
+    @PostMapping("/create")
     @PreAuthorize("hasRole('CREATOR')")
     public ResponseEntity<GeneralResponse> createCampaign(@Valid @RequestBody CreateCampaignRequest request, @AuthenticationPrincipal UserDetails userDetails) {
         return buildResponse("Creada", HttpStatus.CREATED, campaignService.createCampaign(request, userDetails.getUsername()));
     }
 
-    @GetMapping
+    @GetMapping("/allCampaigns")
     public ResponseEntity<GeneralResponse> getAllCampaigns() {
         return buildResponse("OK", HttpStatus.OK, campaignService.getAllCampaigns());
     }
@@ -60,15 +61,15 @@ public class CampaignController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('CREATOR')")
-    public ResponseEntity<GeneralResponse> updateCampaign(@PathVariable Long id, @Valid @RequestBody CreateCampaignRequest request, @AuthenticationPrincipal UserDetails userDetails) {
-        return buildResponse("Actualizada", HttpStatus.OK, campaignService.updateCampaign(id, request, userDetails.getUsername()));
+    public ResponseEntity<GeneralResponse> updateCampaign(@PathVariable Long id, @Valid @RequestBody UpdateCampaign request, @AuthenticationPrincipal UserDetails userDetails) {
+        return buildResponse("Actualizada", HttpStatus.OK, campaignService.updateCampaign(id, request));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('CREATOR', 'ADMIN')")
     public ResponseEntity<GeneralResponse> deleteCampaign(@PathVariable Long id) {
         campaignService.deleteCampaign(id);
-        return buildResponse("Eliminada", HttpStatus.NO_CONTENT, null);
+        return buildResponse("Eliminada", HttpStatus.OK, null);
     }
 
     @PatchMapping("/{id}/approve")
