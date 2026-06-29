@@ -14,7 +14,6 @@ import com.example.crowdfundingplatform.service.FraudReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +22,7 @@ public class FraudReportServiceImpl implements FraudReportService {
     private final FraudReportRepository fraudReportRepository;
     private final CampaignRepository campaignRepository;
     private final UserRepository userRepository;
+        private final com.example.crowdfundingplatform.mapper.FraudReportMapper fraudReportMapper;
 
     @Override
     public FraudReportDetailResponse createReport(CreateFraudReportRequest request, String reporterEmail) {
@@ -33,21 +33,13 @@ public class FraudReportServiceImpl implements FraudReportService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "No se encontró la campaña con el ID: " + request.getCampaignId()));
 
-        FraudReport report = FraudReport.builder()
-                .reason(request.getReason())
-                .resolved(false)
-                .reporter(reporter)
-                .campaign(campaign)
-                .build();
-
-        return mapToResponse(fraudReportRepository.save(report));
+        FraudReport report = fraudReportMapper.toEntity(request, reporter, campaign);
+        return fraudReportMapper.toResponse(fraudReportRepository.save(report));
     }
 
     @Override
     public List<FraudReportDetailResponse> getUnresolvedReports() {
-        return fraudReportRepository.findByResolvedFalse().stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+                return fraudReportMapper.toListResponse(fraudReportRepository.findByResolvedFalse());
     }
 
     @Override
@@ -57,19 +49,7 @@ public class FraudReportServiceImpl implements FraudReportService {
                         "No se encontró el reporte con el ID: " + id));
 
         report.setResolved(true);
-        return mapToResponse(fraudReportRepository.save(report));
+                return fraudReportMapper.toResponse(fraudReportRepository.save(report));
     }
-
-    private FraudReportDetailResponse mapToResponse(FraudReport report) {
-        return FraudReportDetailResponse.builder()
-                .id(report.getId())
-                .reason(report.getReason())
-                .resolved(report.getResolved())
-                .createdAt(report.getCreatedAt())
-                .reporterId(report.getReporter().getId())
-                .reporterName(report.getReporter().getName())
-                .campaignId(report.getCampaign().getId())
-                .campaignTitle(report.getCampaign().getTitle())
-                .build();
-    }
+    
 }
