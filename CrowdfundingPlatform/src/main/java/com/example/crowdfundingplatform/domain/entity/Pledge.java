@@ -21,6 +21,12 @@ public class Pledge {
     @Column(nullable = false)
     private BigDecimal amount;
 
+    @Column(name = "commission_amount", precision = 10, scale = 2)
+    private BigDecimal commissionAmount;
+
+    @Column(name = "net_amount", precision = 10, scale = 2)
+    private BigDecimal netAmount;
+
     // Si el pago fue cobrado o no
     @Column(nullable = false)
     private Boolean charged = false;

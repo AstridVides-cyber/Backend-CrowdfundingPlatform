@@ -22,13 +22,13 @@ public class CampaignController {
 
     private final CampaignService campaignService;
 
-    @PostMapping
+    @PostMapping("/create")
     @PreAuthorize("hasRole('CREATOR')")
     public ResponseEntity<GeneralResponse> createCampaign(@Valid @RequestBody CreateCampaignRequest request, @AuthenticationPrincipal UserDetails userDetails) {
         return buildResponse("Creada", HttpStatus.CREATED, campaignService.createCampaign(request, userDetails.getUsername()));
     }
 
-    @GetMapping
+    @GetMapping("/allCampaigns")
     public ResponseEntity<GeneralResponse> getAllCampaigns() {
         return buildResponse("OK", HttpStatus.OK, campaignService.getAllCampaigns());
     }

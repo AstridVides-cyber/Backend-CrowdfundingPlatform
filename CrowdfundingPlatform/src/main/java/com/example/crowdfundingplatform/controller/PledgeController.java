@@ -23,7 +23,7 @@ public class PledgeController {
 
     // POST - El patrocinador promete una donación.
     // Regla "todo o nada": el service debe crearla con charged=false (no se cobra aún).
-    @PostMapping
+    @PostMapping("/create")
     @PreAuthorize("hasRole('SPONSOR')")
     public ResponseEntity<PledgeDetailResponse> createPledge(
             @Valid @RequestBody CreatePledgeRequest request,

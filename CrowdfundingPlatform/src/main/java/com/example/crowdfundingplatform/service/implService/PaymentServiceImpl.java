@@ -16,11 +16,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
-    @Value("${stripe.secret-key}")
+    @Value("${SK_TEST}")
     private String stripeSecretKey;
 
     private final PledgeRepository pledgeRepository;
@@ -33,7 +35,18 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentResponse createPaymentIntent(PaymentRequest request) {
         try {
+            // Calculando comision
+            BigDecimal commission = request.getAmount().multiply(new BigDecimal("0.05"));
+            BigDecimal netAmount = request.getAmount().subtract(commission);
 
+            // Guardar en el pledge antes del cobro
+            Pledge pledge = pledgeRepository.findById(request.getPledgeId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Pledge no encontrado"));
+            pledge.setCommissionAmount(commission);
+            pledge.setNetAmount(netAmount);
+            pledgeRepository.save(pledge);
+
+            // Stripe cobra el monto total sin comision
             long amountInCents = request.getAmount()
                     .multiply(new java.math.BigDecimal("100"))
                     .longValue();
@@ -68,6 +81,13 @@ public class PaymentServiceImpl implements PaymentService {
                     .orElseThrow(() -> new ResourceNotFoundException(
                             "Pledge no encontrado con id: " + pledgeId));
 
+            if (pledge.getCommissionAmount() == null) {
+                BigDecimal commission = pledge.getAmount().multiply(new BigDecimal("0.05"));
+                BigDecimal netAmount = pledge.getAmount().subtract(commission);
+                pledge.setCommissionAmount(commission);
+                pledge.setNetAmount(netAmount);
+            }
+
             pledge.setCharged(true);
             pledgeRepository.save(pledge);
 
@@ -77,6 +97,9 @@ public class PaymentServiceImpl implements PaymentService {
                     .status(paymentIntent.getStatus())
                     .currency(paymentIntent.getCurrency())
                     .amount(paymentIntent.getAmount())
+                    .totalAmount(pledge.getAmount())
+                    .commissionAmount(pledge.getCommissionAmount())
+                    .netAmount(pledge.getNetAmount())
                     .build();
 
         } catch (StripeException e) {
