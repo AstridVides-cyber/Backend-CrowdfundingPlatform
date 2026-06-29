@@ -46,20 +46,4 @@ public class CampaignMapper {
         return campaigns.stream().map(this::toResponse).toList();
     }
 
-    public Campaign updateEntity(Campaign campaign, CreateCampaignRequest request) {
-        return Campaign.builder()
-                .id(campaign.getId())
-                .title(request.getTitle())
-                .description(request.getDescription())
-                .goal(request.getGoal())
-                .goalType(request.getGoalType())
-                .deadline(request.getDeadline())
-                .status(request.getStatus())
-                .category(request.getCategory())
-                .location(request.getLocation())
-                .isFeatured(request.getIsFeatured())
-                .createdAt(request.getCreatedAt())
-                .creator(request.getCreator())
-                .build();
-    }
 }

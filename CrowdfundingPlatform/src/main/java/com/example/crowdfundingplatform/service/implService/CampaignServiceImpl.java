@@ -1,6 +1,7 @@
 package com.example.crowdfundingplatform.service.implService;
 
 import com.example.crowdfundingplatform.domain.dto.request.CreateCampaignRequest;
+import com.example.crowdfundingplatform.domain.dto.request.UpdateCampaign;
 import com.example.crowdfundingplatform.domain.dto.response.CampaignDetailResponse;
 import com.example.crowdfundingplatform.domain.entity.Campaign;
 import com.example.crowdfundingplatform.domain.entity.User;
@@ -83,9 +84,33 @@ public class CampaignServiceImpl implements CampaignService {
     }
 
     @Override
-    public CampaignDetailResponse updateCampaign(Long id, CreateCampaignRequest request, String creatorEmail) {
-        Campaign campaign = findById(id);
-        campaignMapper.updateEntity(campaign, request);
+    public CampaignDetailResponse updateCampaign(Long id, UpdateCampaign request) {
+        Campaign campaign = campaignRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Campaña no encontrada: " + id));
+        if (request.getTitle() != null){
+            campaign.setTitle(request.getTitle());
+        }
+        if (request.getDescription() != null){
+            campaign.setDescription(request.getDescription());
+        }
+        if (request.getCategory() != null){
+            campaign.setCategory(request.getCategory());
+        }
+        if (request.getLocation() != null){
+            campaign.setLocation(request.getLocation());
+        }
+        if (request.getGoal() != null){
+            campaign.setGoal(request.getGoal());
+        }
+        if (request.getGoalType() != null){
+            campaign.setGoalType(request.getGoalType());
+        }
+        if (request.getDeadline() != null){
+            campaign.setDeadline(request.getDeadline());
+        }
+        if (request.getIsFeatured() != null){
+            campaign.setIsFeatured(request.getIsFeatured());
+        }
         return campaignMapper.toResponse(campaignRepository.save(campaign));
     }
 
