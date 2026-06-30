@@ -52,4 +52,4 @@ public class FraudReportServiceImpl implements FraudReportService {
                 return fraudReportMapper.toResponse(fraudReportRepository.save(report));
     }
     
-}
+    }

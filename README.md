@@ -102,6 +102,16 @@ CREATE DATABASE crowdfunding_db;
 Run → Edit Configurations → Environment Variables
 ```
 
+Si se quiere levantar la API con HTTPS, basta con activar `SSL_ENABLED=true`. Si el keystore no existe, la app lo genera sola al arrancar en `ssl/crowdfunding-platform.jks`.
+
+Variables opcionales:
+- `SSL_KEY_STORE=/ruta/al/crowdfunding-platform.jks`
+- `SSL_KEY_STORE_PASSWORD=tu_password`
+- `SSL_KEY_PASSWORD=tu_password` (si es distinto)
+- `SSL_KEY_STORE_TYPE=JKS`
+- `SSL_KEY_ALIAS=crowdfunding-platform`
+- `SERVER_PORT=8443`
+
 **4. Correr el proyecto:**
 ```bash
 ./mvnw spring-boot:run
@@ -122,6 +132,13 @@ La API estará disponible en: `http://localhost:8080`
 | `PK_TEST` | pk_test_tu_clave_stripe |Clave pública de Stripe (modo test) |
 | `JWT_SECRET` | jwt_secret_test_tu_clave |Clave secreta de JWT |
 | `JWT_EXPIRATION` | 3600000  |Tiempo de expiración |
+| `SSL_ENABLED` | true/false | Activa HTTPS con keystore |
+| `SSL_KEY_STORE` | ssl/crowdfunding-platform.jks | Ruta al keystore |
+| `SSL_KEY_STORE_PASSWORD` | changeit | Contraseña del keystore |
+| `SSL_KEY_PASSWORD` | changeit | Contraseña de la clave privada |
+| `SSL_KEY_STORE_TYPE` | JKS | Tipo de keystore |
+| `SSL_KEY_ALIAS` | crowdfunding-platform | Alias del certificado |
+| `SERVER_PORT` | 8443 | Puerto HTTPS/HTTP |
 
 ##
 
