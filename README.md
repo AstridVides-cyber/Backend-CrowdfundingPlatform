@@ -144,24 +144,74 @@ La API estará disponible en: `https://localhost:8443`
 
 ## 📡 Endpoints
 
-🔓 Auth (Público)
-MétodoRutaDescripciónPOST/api/auth/registerRegistro de usuarioPOST/api/auth/loginInicio de sesión
-🏕️ Campaigns
-MétodoRutaRolDescripciónPOST/api/campaigns/createCREATORCrear campañaGET/api/campaigns/allCampaignsAutenticadoListar campañasGET/api/campaigns/{id}AutenticadoDetalle de campañaPUT/api/campaigns/{id}CREATORActualizar campañaDELETE/api/campaigns/{id}CREATOR/ADMINEliminar campañaGET/api/campaigns/featuredAutenticadoCampañas destacadasGET/api/campaigns/category/{cat}AutenticadoFiltrar por categoríaGET/api/campaigns/location/{loc}AutenticadoFiltrar por ubicaciónGET/api/campaigns/status/{status}AutenticadoFiltrar por estadoPATCH/api/campaigns/{id}/approveADMINAprobar campañaPATCH/api/campaigns/{id}/rejectADMINRechazar campaña
-💰 Pledges
-MétodoRutaRolDescripciónPOST/api/pledges/createSPONSORCrear pledgeGET/api/pledges/mySPONSORMis pledgesGET/api/pledges?campaignId={id}CREATOR/ADMINPledges de campañaPATCH/api/pledges/{id}/refundADMINReembolsar pledge
-🎁 Rewards
-MétodoRutaRolDescripciónPOST/api/rewardsCREATORCrear recompensaGET/api/rewards/{id}AutenticadoDetalle de recompensaGET/api/rewards/campaign/{id}AutenticadoRecompensas de campañaPUT/api/rewards/{id}CREATORActualizar recompensaDELETE/api/rewards/{id}CREATOREliminar recompensa
-🚨 Fraud Reports
-MétodoRutaRolDescripciónPOST/api/fraud-reportsAutenticadoReportar campañaGET/api/fraud-reportsADMINListar reportes sin resolverPATCH/api/fraud-reports/{id}/resolveADMINResolver reporte
-👮 Admin
-MétodoRutaDescripciónGET/api/admin/campaigns/pendingCampañas pendientesPATCH/api/admin/campaigns/{id}/approveAprobar campañaPATCH/api/admin/campaigns/{id}/rejectRechazar campañaGET/api/admin/fraud-reportsReportes sin resolverPATCH/api/admin/fraud-reports/{id}/resolveResolver reporte
-📤 Export
-MétodoRutaRolDescripciónGET/api/export/CSVADMIN/CREATORExportar en CSVGET/api/export/WEBADMIN/CREATORExportar en XMLGET/api/export/RSSADMIN/CREATORExportar en RSS
-💳 Payments
-MétodoRutaRolDescripciónPOST/api/payments/create-intentSPONSORCrear PaymentIntentPOST/api/payments/confirm/{pledgeId}?paymentIntentId={id}SPONSORConfirmar pago
+## 🔓 Auth (Público)
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| POST | `/api/auth/register` | Registro de usuario |
+| POST | `/api/auth/login` | Inicio de sesión |
 
+## 🏕️ Campaigns
+| Método | Ruta | Rol | Descripción |
+|--------|------|-----|-------------|
+| POST | `/api/campaigns/create` | CREATOR | Crear campaña |
+| GET | `/api/campaigns/allCampaigns` | Autenticado | Listar campañas |
+| GET | `/api/campaigns/{id}` | Autenticado | Detalle de campaña |
+| PUT | `/api/campaigns/{id}` | CREATOR | Actualizar campaña |
+| DELETE | `/api/campaigns/{id}` | CREATOR/ADMIN | Eliminar campaña |
+| GET | `/api/campaigns/featured` | Autenticado | Campañas destacadas |
+| GET | `/api/campaigns/category/{cat}` | Autenticado | Filtrar por categoría |
+| GET | `/api/campaigns/location/{loc}` | Autenticado | Filtrar por ubicación |
+| GET | `/api/campaigns/status/{status}` | Autenticado | Filtrar por estado |
+| PATCH | `/api/campaigns/{id}/approve` | ADMIN | Aprobar campaña |
+| PATCH | `/api/campaigns/{id}/reject` | ADMIN | Rechazar campaña |
+
+## 💰 Pledges
+| Método | Ruta | Rol | Descripción |
+|--------|------|-----|-------------|
+| POST | `/api/pledges/create` | SPONSOR | Crear pledge |
+| GET | `/api/pledges/my` | SPONSOR | Mis pledges |
+| GET | `/api/pledges?campaignId={id}` | CREATOR/ADMIN | Pledges de campaña |
+| PATCH | `/api/pledges/{id}/refund` | ADMIN | Reembolsar pledge |
+
+## 🎁 Rewards
+| Método | Ruta | Rol | Descripción |
+|--------|------|-----|-------------|
+| POST | `/api/rewards` | CREATOR | Crear recompensa |
+| GET | `/api/rewards/{id}` | Autenticado | Detalle de recompensa |
+| GET | `/api/rewards/campaign/{id}` | Autenticado | Recompensas de campaña |
+| PUT | `/api/rewards/{id}` | CREATOR | Actualizar recompensa |
+| DELETE | `/api/rewards/{id}` | CREATOR | Eliminar recompensa |
+
+## 🚨 Fraud Reports
+| Método | Ruta | Rol | Descripción |
+|--------|------|-----|-------------|
+| POST | `/api/fraud-reports` | Autenticado | Reportar campaña |
+| GET | `/api/fraud-reports` | ADMIN | Listar reportes sin resolver |
+| PATCH | `/api/fraud-reports/{id}/resolve` | ADMIN | Resolver reporte |
+
+## 👮 Admin
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| GET | `/api/admin/campaigns/pending` | Campañas pendientes |
+| PATCH | `/api/admin/campaigns/{id}/approve` | Aprobar campaña |
+| PATCH | `/api/admin/campaigns/{id}/reject` | Rechazar campaña |
+| GET | `/api/admin/fraud-reports` | Reportes sin resolver |
+| PATCH | `/api/admin/fraud-reports/{id}/resolve` | Resolver reporte |
+
+## 📤 Export
+| Método | Ruta | Rol | Descripción |
+|--------|------|-----|-------------|
+| GET | `/api/export/CSV` | ADMIN/CREATOR | Exportar en CSV |
+| GET | `/api/export/WEB` | ADMIN/CREATOR | Exportar en XML |
+| GET | `/api/export/RSS` | ADMIN/CREATOR | Exportar en RSS |
+
+## 💳 Payments
+| Método | Ruta | Rol | Descripción |
+|--------|------|-----|-------------|
+| POST | `/api/payments/create-intent` | SPONSOR | Crear PaymentIntent |
+| POST | `/api/payments/confirm/{pledgeId}?paymentIntentId={id}` | SPONSOR | Confirmar pago |
 <div align="center">
+##
 
 **Desarrollado con Spring Boot :D**
 
