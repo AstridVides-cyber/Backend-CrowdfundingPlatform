@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class CsvExporter implements ExportStrategy {
+public class   CsvExporter implements ExportStrategy {
 
     @Override
     public byte[] export(List<Campaign> campaigns) {
