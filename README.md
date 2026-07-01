@@ -102,12 +102,22 @@ CREATE DATABASE crowdfunding_db;
 Run → Edit Configurations → Environment Variables
 ```
 
+La API arranca en HTTPS por defecto. Si el keystore no existe, la app lo genera sola al arrancar en `ssl/crowdfunding-platform.jks`.
+
+Variables opcionales:
+- `SSL_KEY_STORE=/ruta/al/crowdfunding-platform.jks`
+- `SSL_KEY_STORE_PASSWORD=tu_password`
+- `SSL_KEY_PASSWORD=tu_password` (si es distinto)
+- `SSL_KEY_STORE_TYPE=JKS`
+- `SSL_KEY_ALIAS=crowdfunding-platform`
+- `SERVER_PORT=8443` (por defecto)
+
 **4. Correr el proyecto:**
 ```bash
 ./mvnw spring-boot:run
 ```
 
-La API estará disponible en: `http://localhost:8080`
+La API estará disponible en: `https://localhost:8443`
 
 ##
 
@@ -122,22 +132,29 @@ La API estará disponible en: `http://localhost:8080`
 | `PK_TEST` | pk_test_tu_clave_stripe |Clave pública de Stripe (modo test) |
 | `JWT_SECRET` | jwt_secret_test_tu_clave |Clave secreta de JWT |
 | `JWT_EXPIRATION` | 3600000  |Tiempo de expiración |
+| `SSL_ENABLED` | true/false | Activa HTTPS con keystore |
+| `SSL_KEY_STORE` | ssl/crowdfunding-platform.jks | Ruta al keystore |
+| `SSL_KEY_STORE_PASSWORD` | changeit | Contraseña del keystore |
+| `SSL_KEY_PASSWORD` | changeit | Contraseña de la clave privada |
+| `SSL_KEY_STORE_TYPE` | JKS | Tipo de keystore |
+| `SSL_KEY_ALIAS` | crowdfunding-platform | Alias del certificado |
+| `SERVER_PORT` | 8443 | Puerto HTTPS/HTTP |
 
 ##
 
 ## 📡 Endpoints
 
-### 🔓 Auth (Público)
+## 🔓 Auth (Público)
 | Método | Ruta | Descripción |
-|---|---|---|
+|--------|------|-------------|
 | POST | `/api/auth/register` | Registro de usuario |
 | POST | `/api/auth/login` | Inicio de sesión |
 
-### 🏕️ Campaigns
+## 🏕️ Campaigns
 | Método | Ruta | Rol | Descripción |
-|---|---|---|---|
-| POST | `/api/campaigns` | CREATOR | Crear campaña |
-| GET | `/api/campaigns` | Autenticado | Listar campañas |
+|--------|------|-----|-------------|
+| POST | `/api/campaigns/create` | CREATOR | Crear campaña |
+| GET | `/api/campaigns/allCampaigns` | Autenticado | Listar campañas |
 | GET | `/api/campaigns/{id}` | Autenticado | Detalle de campaña |
 | PUT | `/api/campaigns/{id}` | CREATOR | Actualizar campaña |
 | DELETE | `/api/campaigns/{id}` | CREATOR/ADMIN | Eliminar campaña |
@@ -148,55 +165,53 @@ La API estará disponible en: `http://localhost:8080`
 | PATCH | `/api/campaigns/{id}/approve` | ADMIN | Aprobar campaña |
 | PATCH | `/api/campaigns/{id}/reject` | ADMIN | Rechazar campaña |
 
-### 💰 Pledges
+## 💰 Pledges
 | Método | Ruta | Rol | Descripción |
-|---|---|---|---|
-| POST | `/api/pledges` | SPONSOR | Crear pledge |
+|--------|------|-----|-------------|
+| POST | `/api/pledges/create` | SPONSOR | Crear pledge |
 | GET | `/api/pledges/my` | SPONSOR | Mis pledges |
-| GET | `/api/pledges/campaign/{id}` | CREATOR/ADMIN | Pledges de campaña |
-| POST | `/api/pledges/{id}/refund` | ADMIN | Reembolsar pledge |
+| GET | `/api/pledges?campaignId={id}` | CREATOR/ADMIN | Pledges de campaña |
+| PATCH | `/api/pledges/{id}/refund` | ADMIN | Reembolsar pledge |
 
-### 🎁 Rewards
+## 🎁 Rewards
 | Método | Ruta | Rol | Descripción |
-|---|---|---|---|
+|--------|------|-----|-------------|
 | POST | `/api/rewards` | CREATOR | Crear recompensa |
 | GET | `/api/rewards/{id}` | Autenticado | Detalle de recompensa |
 | GET | `/api/rewards/campaign/{id}` | Autenticado | Recompensas de campaña |
 | PUT | `/api/rewards/{id}` | CREATOR | Actualizar recompensa |
 | DELETE | `/api/rewards/{id}` | CREATOR | Eliminar recompensa |
 
-### 🚨 Fraud Reports
+## 🚨 Fraud Reports
 | Método | Ruta | Rol | Descripción |
-|---|---|---|---|
+|--------|------|-----|-------------|
 | POST | `/api/fraud-reports` | Autenticado | Reportar campaña |
-| GET | `/api/fraud-reports/campaign/{id}` | ADMIN | Reportes de campaña |
+| GET | `/api/fraud-reports` | ADMIN | Listar reportes sin resolver |
+| PATCH | `/api/fraud-reports/{id}/resolve` | ADMIN | Resolver reporte |
 
-### 👮 Admin
+## 👮 Admin
 | Método | Ruta | Descripción |
-|---|---|---|
+|--------|------|-------------|
 | GET | `/api/admin/campaigns/pending` | Campañas pendientes |
 | PATCH | `/api/admin/campaigns/{id}/approve` | Aprobar campaña |
 | PATCH | `/api/admin/campaigns/{id}/reject` | Rechazar campaña |
 | GET | `/api/admin/fraud-reports` | Reportes sin resolver |
 | PATCH | `/api/admin/fraud-reports/{id}/resolve` | Resolver reporte |
 
-### 📤 Export
+## 📤 Export
 | Método | Ruta | Rol | Descripción |
-|---|---|---|---|
+|--------|------|-----|-------------|
 | GET | `/api/export/CSV` | ADMIN/CREATOR | Exportar en CSV |
 | GET | `/api/export/WEB` | ADMIN/CREATOR | Exportar en XML |
 | GET | `/api/export/RSS` | ADMIN/CREATOR | Exportar en RSS |
 
-### 💳 Payments 
+## 💳 Payments
 | Método | Ruta | Rol | Descripción |
-|---|---|---|---|
+|--------|------|-----|-------------|
 | POST | `/api/payments/create-intent` | SPONSOR | Crear PaymentIntent |
-| POST | `/api/payments/confirm/{pledgeId}` | SPONSOR | Confirmar pago |
-
-
-##
-
+| POST | `/api/payments/confirm/{pledgeId}?paymentIntentId={id}` | SPONSOR | Confirmar pago |
 <div align="center">
+##
 
 **Desarrollado con Spring Boot :D**
 

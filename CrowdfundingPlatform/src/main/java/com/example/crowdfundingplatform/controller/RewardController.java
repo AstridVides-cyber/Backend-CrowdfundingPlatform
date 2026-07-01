@@ -24,27 +24,17 @@ public class RewardController {
 
     private final RewardService rewardService;
 
-    // POST - El creador agrega una recompensa a su campaña (campaignId viaja en el body)
+    // POST /api/rewards - CREATOR - Crear recompensa
     @PostMapping
     @PreAuthorize("hasRole('CREATOR')")
     public ResponseEntity<GeneralResponse> createReward(
             @Valid @RequestBody CreateRewardRequest request,
             @AuthenticationPrincipal JwtAuth principal) {
-        // principal.getUsername() devuelve el email del usuario autenticado
         RewardDetailResponse response = rewardService.createReward(request, principal.getUsername());
         return buildResponse("Recompensa creada exitosamente", HttpStatus.CREATED, response);
     }
 
-    // GET - Lista las recompensas de una campaña: /api/rewards?campaignId=1
-    @GetMapping
-    public ResponseEntity<GeneralResponse> getRewardsByCampaign(@RequestParam Long campaignId) {
-        return buildResponse("Recompensas obtenidas exitosamente",
-                HttpStatus.OK,
-                rewardService.getRewardsByCampaign(campaignId)
-        );
-    }
-
-    // GET - Obtiene una recompensa por su id
+    // GET /api/rewards/{id} - Autenticado - Detalle de recompensa
     @GetMapping("/{id}")
     public ResponseEntity<GeneralResponse> getRewardById(@PathVariable Long id) {
         return buildResponse("Recompensa obtenida exitosamente",
@@ -53,7 +43,16 @@ public class RewardController {
         );
     }
 
-    // PUT - El creador edita una recompensa propia (la validación de "dueño" va en el service)
+    // GET /api/rewards/campaign/{id} - Autenticado - Recompensas de campaña
+    @GetMapping("/campaign/{id}")
+    public ResponseEntity<GeneralResponse> getRewardsByCampaign(@PathVariable("id") Long campaignId) {
+        return buildResponse("Recompensas obtenidas exitosamente",
+                HttpStatus.OK,
+                rewardService.getRewardsByCampaign(campaignId)
+        );
+    }
+
+    // PUT /api/rewards/{id} - CREATOR - Actualizar recompensa
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('CREATOR')")
     public ResponseEntity<GeneralResponse> updateReward(
@@ -66,14 +65,13 @@ public class RewardController {
         );
     }
 
-    // DELETE - El creador elimina una recompensa propia
+    // DELETE /api/rewards/{id} - CREATOR - Eliminar recompensa
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('CREATOR')")
     public ResponseEntity<GeneralResponse> deleteReward(
             @PathVariable Long id,
             @AuthenticationPrincipal JwtAuth principal) {
         rewardService.deleteReward(id, principal.getUsername());
-        // 204: operación exitosa sin cuerpo de respuesta
         return buildResponse("Recompensa eliminada exitosamente",
                 HttpStatus.NO_CONTENT,
                 null
@@ -93,5 +91,4 @@ public class RewardController {
                         .build()
                 );
     }
-
 }

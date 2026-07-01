@@ -26,11 +26,11 @@ spring:
     expiration: ${JWT_EXPIRATION}
 
 server:
-    port: ${SERVER_PORT:8443}
-    ssl:
-      enabled: ${SSL_ENABLED:true}
-      key-store: ${SSL_KEY_STORE:ssl/crowdfunding-platform.jks}
-      key-store-password: ${SSL_KEY_STORE_PASSWORD:changeit}
-      key-password: ${SSL_KEY_PASSWORD:${SSL_KEY_STORE_PASSWORD:changeit}}
-      key-store-type: ${SSL_KEY_STORE_TYPE:JKS}
-      key-alias: ${SSL_KEY_ALIAS:crowdfunding-platform}
+  port: ${SERVER_PORT:8443}
+  ssl:
+    enabled: ${SSL_ENABLED:true}
+    key-store: ${SSL_KEY_STORE:ssl/crowdfunding-platform.jks}
+    key-store-password: ${SSL_KEY_STORE_PASSWORD:changeit}
+    key-password: ${SSL_KEY_PASSWORD:${SSL_KEY_STORE_PASSWORD:changeit}}
+    key-store-type: ${SSL_KEY_STORE_TYPE:JKS}
+    key-alias: ${SSL_KEY_ALIAS:crowdfunding-platform}
