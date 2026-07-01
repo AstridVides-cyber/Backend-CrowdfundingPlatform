@@ -102,7 +102,7 @@ CREATE DATABASE crowdfunding_db;
 Run → Edit Configurations → Environment Variables
 ```
 
-Si se quiere levantar la API con HTTPS, basta con activar `SSL_ENABLED=true`. Si el keystore no existe, la app lo genera sola al arrancar en `ssl/crowdfunding-platform.jks`.
+La API arranca en HTTPS por defecto. Si el keystore no existe, la app lo genera sola al arrancar en `ssl/crowdfunding-platform.jks`.
 
 Variables opcionales:
 - `SSL_KEY_STORE=/ruta/al/crowdfunding-platform.jks`
@@ -110,14 +110,14 @@ Variables opcionales:
 - `SSL_KEY_PASSWORD=tu_password` (si es distinto)
 - `SSL_KEY_STORE_TYPE=JKS`
 - `SSL_KEY_ALIAS=crowdfunding-platform`
-- `SERVER_PORT=8443`
+- `SERVER_PORT=8443` (por defecto)
 
 **4. Correr el proyecto:**
 ```bash
 ./mvnw spring-boot:run
 ```
 
-La API estará disponible en: `http://localhost:8080`
+La API estará disponible en: `https://localhost:8443`
 
 ##
 
