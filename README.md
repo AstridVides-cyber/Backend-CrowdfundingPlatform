@@ -144,7 +144,7 @@ La API estará disponible en: `https://localhost:8443`
 
 ## 📡 Endpoints
 
-## 🔓 Auth (Público)
+## 🔓 Auth 
 | Método | Ruta | Descripción |
 |--------|------|-------------|
 | POST | `/api/auth/register` | Registro de usuario |
@@ -159,8 +159,8 @@ La API estará disponible en: `https://localhost:8443`
 | PUT | `/api/campaigns/{id}` | CREATOR | Actualizar campaña |
 | DELETE | `/api/campaigns/{id}` | CREATOR/ADMIN | Eliminar campaña |
 | GET | `/api/campaigns/featured` | Autenticado | Campañas destacadas |
-| GET | `/api/campaigns/category/{cat}` | Autenticado | Filtrar por categoría |
-| GET | `/api/campaigns/location/{loc}` | Autenticado | Filtrar por ubicación |
+| GET | `/api/campaigns/category/{id}` | Autenticado | Filtrar por categoría |
+| GET | `/api/campaigns/location/{id}` | Autenticado | Filtrar por ubicación |
 | GET | `/api/campaigns/status/{status}` | Autenticado | Filtrar por estado |
 | PATCH | `/api/campaigns/{id}/approve` | ADMIN | Aprobar campaña |
 | PATCH | `/api/campaigns/{id}/reject` | ADMIN | Rechazar campaña |
@@ -209,8 +209,9 @@ La API estará disponible en: `https://localhost:8443`
 | Método | Ruta | Rol | Descripción |
 |--------|------|-----|-------------|
 | POST | `/api/payments/create-intent` | SPONSOR | Crear PaymentIntent |
-| POST | `/api/payments/confirm/{pledgeId}?paymentIntentId={id}` | SPONSOR | Confirmar pago |
+| POST | `/api/payments/confirm/{id}` | SPONSOR | Confirmar pago |
 <div align="center">
+    
 ##
 
 **Desarrollado con Spring Boot :D**
