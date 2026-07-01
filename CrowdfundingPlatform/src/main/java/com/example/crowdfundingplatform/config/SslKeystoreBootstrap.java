@@ -50,7 +50,7 @@ public final class SslKeystoreBootstrap {
     }
 
     private static boolean isSslEnabled() {
-        return Boolean.parseBoolean(valueOrDefault(System.getenv("SSL_ENABLED"), "false"));
+        return Boolean.parseBoolean(valueOrDefault(System.getenv("SSL_ENABLED"), "true"));
     }
 
     private static Path resolveKeystorePath(String configuredPath) {
